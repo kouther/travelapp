@@ -5,7 +5,8 @@ require 'config.php'; // Assuming config.php contains the PDO setup
 // Check if the 'export' parameter is set to 'excel' in the URL
 if (isset($_GET['export']) && $_GET['export'] == 'excel') {
     // Export to Excel logic
-    $sql = "SELECT * FROM `order`";
+    $sql = "SELECT * FROM `order` ORDER BY request_date_time ASC";
+
     $stmt = $pdo->query($sql);
 
     // Set headers to force the browser to download the file as an Excel file
@@ -58,8 +59,8 @@ if (!empty($_GET['category'])) {
     $conditions[] = "product_cat = :category";
 }
 
-if (!empty($_GET['number_of_persons'])) {
-    $conditions[] = "circ_number_of_persons = :number_of_persons";
+if (!empty($_GET['payment_status'])) {
+    $conditions[] = "status = :payment_status"; // Assurez-vous que la colonne est correcte
 }
 
 // If there are conditions, append them to the query
@@ -79,13 +80,12 @@ if (!empty($_GET['departure_date'])) {
 if (!empty($_GET['category'])) {
     $stmt->bindParam(':category', $_GET['category']);
 }
-if (!empty($_GET['number_of_persons'])) {
-    $stmt->bindParam(':number_of_persons', $_GET['number_of_persons']);
+if (!empty($_GET['payment_status'])) {
+    $stmt->bindParam(':payment_status', $_GET['payment_status']);
 }
 
 $stmt->execute();
 ?>
-
 
 <!doctype html>
 <html lang="en">
@@ -382,9 +382,7 @@ $stmt->execute();
                             <a class="dropdown-item" href="apps-chat.html"><i class="mdi mdi-message-text-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
                             <a class="dropdown-item" href="pages-faqs.html"><i class="mdi mdi-lifebuoy text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-wallet text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$6951.02</b></span></a>
-                            <a class="dropdown-item d-flex align-items-center" href="#"><i class="mdi mdi-cog-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Settings</span><span class="badge badge-soft-success ms-auto">New</span></a>
-                            <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
+                            
                             <a class="dropdown-item" href="logout.php"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
                         </div>
                     </div>
@@ -560,14 +558,9 @@ $stmt->execute();
                                 <span class="badge rounded-pill bg-info">8</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="auth-login.html" data-key="t-login">Login</a></li>
-                                <li><a href="auth-register.html" data-key="t-register">Register</a></li>
-                                <li><a href="auth-recoverpw.html" data-key="t-recover-password">Recover Password</a></li>
-                                <li><a href="auth-lock-screen.html" data-key="t-lock-screen">Lock Screen</a></li>
-                                <li><a href="auth-logout.html" data-key="t-logout">Logout</a></li>
-                                <li><a href="auth-confirm-mail.html" data-key="t-confirm-mail">Confirm Mail</a></li>
-                                <li><a href="auth-email-verification.html" data-key="t-email-verification">Email Verification</a></li>
-                                <li><a href="auth-two-step-verification.html" data-key="t-two-step-verification">Two Step Verification</a></li>
+                               
+                                <li><a href="logout.php" data-key="t-logout">Logout</a></li>
+                                
                             </ul>
                         </li>
 
@@ -782,14 +775,8 @@ $stmt->execute();
                                 <h6 class="mb-0">Jennifer Bennett</h6>
                                 <p class="mb-0 font-size-11 text-muted">jennifer.bennett@email.com</p>
                             </div>
-                            <a class="dropdown-item" href="contacts-profile.html"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                            <a class="dropdown-item" href="apps-chat.html"><i class="mdi mdi-message-text-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
-                            <a class="dropdown-item" href="pages-faqs.html"><i class="mdi mdi-lifebuoy text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-wallet text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$6951.02</b></span></a>
-                            <a class="dropdown-item d-flex align-items-center" href="#"><i class="mdi mdi-cog-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Settings</span><span class="badge badge-soft-success ms-auto">New</span></a>
-                            <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
-                            <a class="dropdown-item" href="auth-logout.html"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
+
+                            <a class="dropdown-item" href="logout.php"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
                         </div>
                     </div>
                 </div>
@@ -870,11 +857,15 @@ $stmt->execute();
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-2">
-                                                    <div class="mb-3">
-                                                        <label class="form-label" for="number_of_persons">Number of Persons:</label>
-                                                        <input type="number" class="form-control" id="number_of_persons" name="number_of_persons" value="<?php echo isset($_GET['number_of_persons']) ? $_GET['number_of_persons'] : ''; ?>">
-                                                    </div>
-                                                </div>
+    <div class="mb-3">
+        <label class="form-label" for="status">Status:</label>
+        <select name="payment_status" id="payment_status" class="form-control">
+            <option value="valide" <?php echo (isset($_GET['payment_status']) && $_GET['payment_status'] == 'valide') ? 'selected' : ''; ?>>Valide</option>
+            <option value="impayé" <?php echo (isset($_GET['payment_status']) && $_GET['payment_status'] == 'impayé') ? 'selected' : ''; ?>>Impayé</option>
+        </select>
+    </div>
+</div>
+
                                                 <div class="col-lg-2">
                                                     <button type="submit" class="btn btn-primary w-md" style="margin-top:25px;">Search</button>
                                                 </div>
@@ -909,8 +900,10 @@ $stmt->execute();
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) : ?>
-                                                    <tr>
+                                                <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) : 
+                                                  ?>
+                                                            <tr style="<?php echo ($row["status"] == "Impayé") ? 'background-color:red;color:#fff;' : ''; ?>">
+
                                                         <td><?php echo $row["order_number"]; ?></td>
                                                         <td><?php echo $row["fname"]; ?></td>
                                                         <td><?php echo $row["lname"]; ?></td>

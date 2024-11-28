@@ -9,8 +9,18 @@ if (!isset($_SESSION['user_id'])) {
 $sql_total_orders = "SELECT COUNT(*) AS total_orders FROM `order`";
 $stmt = $pdo->query($sql_total_orders);
 $total_orders = $stmt->fetch(PDO::FETCH_ASSOC)['total_orders'];
+//payment validé
+$sql_total_orders_valid = "SELECT COUNT(*) AS total_orders_valid FROM `order` WHERE `status` = 'valide'";
+$stmt = $pdo->query($sql_total_orders_valid);
+$total_orders_valid = $stmt->fetch(PDO::FETCH_ASSOC)['total_orders_valid'];
+//payment impayé
+$sql_total_orders_Impaye = "SELECT COUNT(*) AS total_orders_Impaye FROM `order` WHERE `status` = 'Impayé'";
+$stmt = $pdo->query($sql_total_orders_Impaye);
+$total_orders_Impaye = $stmt->fetch(PDO::FETCH_ASSOC)['total_orders_Impaye'];
 
-$sql_total_persons = "SELECT SUM(circ_number_of_persons) AS total_persons FROM `order`"; // Use backticks around 'order'
+
+
+$sql_total_persons = "SELECT COUNT(DISTINCT email) AS total_persons FROM `order`"; // Use backticks around 'order'
 $stmt = $pdo->query($sql_total_persons);
 $total_persons = $stmt->fetch(PDO::FETCH_ASSOC)['total_persons'];
 // Fetch average order value
@@ -516,14 +526,7 @@ foreach ($orders_by_category as $category) {
                                 <span class="badge rounded-pill bg-info">8</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="auth-login.html" data-key="t-login">Login</a></li>
-                                <li><a href="auth-register.html" data-key="t-register">Register</a></li>
-                                <li><a href="auth-recoverpw.html" data-key="t-recover-password">Recover Password</a></li>
-                                <li><a href="auth-lock-screen.html" data-key="t-lock-screen">Lock Screen</a></li>
-                                <li><a href="auth-logout.html" data-key="t-logout">Logout</a></li>
-                                <li><a href="auth-confirm-mail.html" data-key="t-confirm-mail">Confirm Mail</a></li>
-                                <li><a href="auth-email-verification.html" data-key="t-email-verification">Email Verification</a></li>
-                                <li><a href="auth-two-step-verification.html" data-key="t-two-step-verification">Two Step Verification</a></li>
+                            <li><a href="logout.php" data-key="t-logout">Logout</a></li>
                             </ul>
                         </li>
 
@@ -738,13 +741,7 @@ foreach ($orders_by_category as $category) {
                                 <h6 class="mb-0">Jennifer Bennett</h6>
                                 <p class="mb-0 font-size-11 text-muted">jennifer.bennett@email.com</p>
                             </div>
-                            <a class="dropdown-item" href="contacts-profile.html"><i class="mdi mdi-account-circle text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Profile</span></a>
-                            <a class="dropdown-item" href="apps-chat.html"><i class="mdi mdi-message-text-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Messages</span></a>
-                            <a class="dropdown-item" href="pages-faqs.html"><i class="mdi mdi-lifebuoy text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Help</span></a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-wallet text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Balance : <b>$6951.02</b></span></a>
-                            <a class="dropdown-item d-flex align-items-center" href="#"><i class="mdi mdi-cog-outline text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Settings</span><span class="badge badge-soft-success ms-auto">New</span></a>
-                            <a class="dropdown-item" href="auth-lock-screen.html"><i class="mdi mdi-lock text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Lock screen</span></a>
+
                             <a class="dropdown-item" href="logout.php"><i class="mdi mdi-logout text-muted font-size-16 align-middle me-1"></i> <span class="align-middle">Logout</span></a>
                         </div>
                     </div>
@@ -795,7 +792,7 @@ foreach ($orders_by_category as $category) {
             <div class="row">
                 <div class="col-xxl-12">
                     <div class="row">
-                        <div class="col-xl-3 col-lg-6">
+                        <div class="col-xl-4 col-lg-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -818,7 +815,7 @@ foreach ($orders_by_category as $category) {
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-6">
+                        <div class="col-xl-4 col-lg-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -841,7 +838,7 @@ foreach ($orders_by_category as $category) {
                             </div>
                         </div>
 
-                        <div class="col-xl-3">
+                        <div class="col-xl-4 col-lg-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -864,7 +861,56 @@ foreach ($orders_by_category as $category) {
                             </div>
                         </div>
 
-                        <div class="col-xl-3">
+                       
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-3">
+                                            <div class="avatar">
+                                                <div class="avatar-title rounded bg-primary bg-gradient">
+                                                    <i data-eva="pie-chart-2" class="fill-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="text-muted mb-1">Total Orders Valid</p>
+                                            <h4 class="mb-0"><?php echo $total_orders_valid; ?></h4>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-end ms-2">
+                                            <div class="badge rounded-pill font-size-13 badge-soft-success"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-3">
+                                            <div class="avatar">
+                                                <div class="avatar-title rounded bg-primary bg-gradient">
+                                                    <i data-eva="shopping-bag" class="fill-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="text-muted mb-1">Total Orders Impaye</p>
+                                            <h4 class="mb-0"><?php echo $total_orders_Impaye; ?></h4>
+                                        </div>
+                                        <div class="flex-shrink-0 align-self-end ms-2">
+                                            <div class="badge rounded-pill font-size-13 badge-soft-danger"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -886,6 +932,8 @@ foreach ($orders_by_category as $category) {
                                 </div>
                             </div>
                         </div>
+
+                        
                     </div>
 
                     <div class="row">

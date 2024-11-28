@@ -5,6 +5,7 @@ require 'config.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']); // No hashing for direct comparison
+    
 
     try {
         $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = :username");
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var_dump($user);
 
             // Directly compare the entered password to the stored password
-            if ($password === $user['password']) {
+            if (md5($password) === $user['password']) {
                 echo "Password is correct!";
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
